@@ -3,16 +3,14 @@
  *
  * @author nulltan
  */
-import processing.core.PApplet;
+ 
 import processing.core.PVector;
-import java.awt.event.KeyEvent;
-import java.io.File;
 import processing.core.PFont;
 import processing.core.PGraphics;
+import java.awt.event.KeyEvent;
+import java.io.File;
 
-//public class Spirograph extends PApplet {
-
-int winWidth, winHeight;
+int winWidth, winHeight; // glue for window resize
 
 float fixedGearRadius, movingGearRadius, penRadius, accumulateAngle, gearRatio;
 PVector center, movingGearPos, penOffset, penPos, prevPenPos;
@@ -23,13 +21,11 @@ PFont spiroFont;
 String message;
 int messageTimer;
 
-@Override
-  public void settings() {
+void settings() {
   size(800, 800);
 }
 
-@Override
-  public void setup() {
+void setup() {
   surface.setResizable(true);
 
   spiro = createGraphics(width, height);
@@ -51,20 +47,24 @@ int messageTimer;
 
   colorMode(HSB, 360, 100, 100, 100);
   spiroHue = 0;
-  bRainbow = false;
+  bRainbow = true;
 
   spiroFont = createFont("Hack-Regular.ttf", 12);
   textFont(spiroFont);
   
   message = "";
   messageTimer = 0;
+  
+  resetSpiroPos();
+  clearSpiro();
 }
 
-@Override
-  public void draw() {
+void draw() {
   if (isWindowResized()) {
     resizeComponents();
   }
+  
+  // inputs being tied to fps makes doing precise adjustment fidgety
 
   if (keyPressed && key == 'r') {
     resetSpiroPos();
@@ -198,7 +198,7 @@ int messageTimer;
   }
 }
 
-public void keyPressed() {
+void keyPressed() {
   if (key == 's') {
     selectOutput("Select a file to save spirograph.", "saveSpiro");
   } else if (key == 'p') {
@@ -206,20 +206,20 @@ public void keyPressed() {
   }
 }
 
-public void resetSpiroPos() {
+void resetSpiroPos() {
   accumulateAngle = 0f;
   penAdvance = 0f;
   bFirstDraw = true;
 }
 
-public void clearSpiro() {
+void clearSpiro() {
   spiro.beginDraw();
   spiro.colorMode(HSB, 360, 100, 100, 100);
   spiro.clear();
   spiro.endDraw();
 }
 
-public void saveSpiro(File selection) {
+void saveSpiro(File selection) {
   if (selection == null) {
     logMessage("No file selected.");
     //} else if (!selection.canWrite()) {
@@ -234,17 +234,17 @@ public void saveSpiro(File selection) {
   }
 }
 
-public void advancePen(float v) {
+void advancePen(float v) {
   penAdvance += v;
   bFirstDraw = true;
 }
 
-public void rotateSpiro(float r) {
+void rotateSpiro(float r) {
   accumulateAngle += r;
   bFirstDraw = true;
 }
 
-public void advanceSpiro() {
+void advanceSpiro() {
   float delta = 1 / frameRate;
   accumulateAngle += delta;
   if (bRainbow) {
@@ -253,14 +253,14 @@ public void advanceSpiro() {
   }
 }
 
-public boolean isWindowResized() {
+boolean isWindowResized() {
   if (winWidth != width || winHeight != height) {
     return true;
   }
   return false;
 }
 
-public void resizeComponents() {
+void resizeComponents() {
   winWidth = width;
   winHeight = height;
   center.set(width / 2, height / 2);
@@ -268,7 +268,7 @@ public void resizeComponents() {
   spiro.setSize(width, height);
 }
 
-public void logMessage(String m) {
+void logMessage(String m) {
   message = m;
   messageTimer = 300;
 }
